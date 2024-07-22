@@ -1,5 +1,0 @@
-pdfplumber
-xlsxwriter
-numpy
-pandas
-streamlit

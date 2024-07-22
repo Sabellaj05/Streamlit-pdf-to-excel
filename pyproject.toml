@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "streamlit-pdf-to-excel"
+version = "0.1.0"
+description = "convert pdf to excel"
+authors = ["Saens <manumancuso05@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+streamlit = "^1.36.0"
+pdfplumber = "^0.11.2"
+xlsxwriter = "^3.2.0"
+pandas = "^2.2.2"
+numpy = "^2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
