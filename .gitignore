@@ -8,6 +8,7 @@ __pycache__/
 *.so
 
 notebook
+pdfs
 
 # Distribution / packaging
 .Python
