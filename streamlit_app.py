@@ -130,7 +130,7 @@ def save_file(df_final_v02: pd.DataFrame) -> BytesIO:
     output = BytesIO()
     # writes to the bytes object
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        df_final_v02.to_excel(writer, index=False, sheet_name='Sheet1')
+        df_final_v02.to_excel(writer, index=False, sheet_name='Bebidas')
         
         workbook = writer.book
         worksheet = writer.sheets['Sheet1']
