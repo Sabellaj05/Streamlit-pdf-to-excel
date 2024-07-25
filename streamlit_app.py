@@ -49,6 +49,9 @@ def main():
             )
 
 def extract_data(pdf_path) -> list:
+    """
+    Extracts raw data from pdf, outputs a list
+    """
     all_data = []
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
@@ -61,6 +64,12 @@ def extract_data(pdf_path) -> list:
     return all_data
 
 def process_data(all_data: list) -> pd.DataFrame:
+    """
+    Agarra los datos crudos, pone las columnas correctas, parsea bien los nombres 
+    y datos para luego ser correctamente casteados a float, luego llama a la fun
+    `checkear_y_asignar` para mover los datos desfazados y limpiar las filas
+
+    """
     df = pd.DataFrame(all_data, columns=["temp1", "temp2", "temp3", "temp4"])
     df.columns = df.iloc[0]
     df = df.drop(0).reset_index(drop=True)
@@ -80,10 +89,12 @@ def process_data(all_data: list) -> pd.DataFrame:
     return df2_1
 
 def checkear_y_asignar(df: pd.DataFrame) -> pd.DataFrame:
-   # for i in range(1, len(df)):
-   #     if (pd.isna(df.iloc[i, 0]) or df.iloc[i, 0] == '') and i < len(df) - 1:
-   #         if pd.isna(df.iloc[i-1, 1]) or df.iloc[i-1, 1] == '':
-   #             df.iloc[i-1, 1] = df.iloc[i, 1]
+    """
+    Busca en la columna articulo si la fila esta vacia o no y agarra el valor
+    de la esa fila en la columna PRECIO PACK para pasarlo a la fila de arriba
+    donde deberia estar
+    luego llama la funcion `more_processing` para limpiar la fila vacia
+    """
 
     for index in df.index.to_list():
         if (pd.isna(df.at[index, 'ARTÍCULO']) or df.at[index, 'ARTÍCULO'] == ''):
@@ -97,12 +108,23 @@ def checkear_y_asignar(df: pd.DataFrame) -> pd.DataFrame:
     return df_f
 
 def more_processing(df_t1: pd.DataFrame) -> pd.DataFrame:
+    """
+    Limpia la fila que con articulo vacia ya que su valor fue extraido y ordenado
+    en la funcion `checkear_y_asignar`
+    """
     df_t2 = df_t1.copy()
     df_t2 = df_t2.drop(df_t2[df_t2["ARTÍCULO"] == ""].index)
     df_final = df_t2.reset_index(drop=True)
     return df_final
 
 def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
+    """
+    Checkea que en la fila las columnas PRECIO PACK O CANT X PACK sean o nulas o vacias
+    de ser asi, agarra el articulo, si no esta vacia agrega ese articulo previamente
+    guardado y lo agrega como fila en la nueva columna Categoria
+    Una vez encontradas todas las categorias borra las filas que las contenian
+    en ultima instancia pone bien los data types a las columnas
+    """
     dff = df_final.copy()
     # Inicializar la columna 
     dff['Categoria'] = None
@@ -130,20 +152,21 @@ def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
 
     return dff2
 
-def save_file(df_final_v02: pd.DataFrame) -> BytesIO:
+def save_file(df_final: pd.DataFrame) -> BytesIO:
     """
-    Writes the data in memory
+    Writes the data in memory instead of saving in locally
+    slighly styles the Excel adding spacing to columns
     """
     output = BytesIO()
     # writes to the bytes object
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        df_final_v02.to_excel(writer, index=False, sheet_name='Bebidas')
+        df_final.to_excel(writer, index=False, sheet_name='Bebidas')
         
         workbook = writer.book
         worksheet = writer.sheets['Bebidas']
         
-        for i, col in enumerate(df_final_v02.columns):
-            max_len = max(df_final_v02[col].astype(str).map(len).max(), len(col)) + 2
+        for i, col in enumerate(df_final.columns):
+            max_len = max(df_final[col].astype(str).map(len).max(), len(col)) + 2
             worksheet.set_column(i, i, max_len)
         
         header_format = workbook.add_format({
@@ -154,7 +177,7 @@ def save_file(df_final_v02: pd.DataFrame) -> BytesIO:
             'border': 1
         })
         
-        for i, col in enumerate(df_final_v02.columns):
+        for i, col in enumerate(df_final.columns):
             worksheet.write(0, i, col, header_format)
     # reset the pointer
     output.seek(0)

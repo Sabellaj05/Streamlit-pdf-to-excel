@@ -7,8 +7,8 @@ __pycache__/
 # C extensions
 *.so
 
-notebook/
 pdfs/
+notebook/
 
 # Distribution / packaging
 .Python
