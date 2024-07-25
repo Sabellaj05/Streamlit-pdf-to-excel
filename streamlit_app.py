@@ -91,7 +91,7 @@ def process_data(all_data: list) -> pd.DataFrame:
 def checkear_y_asignar(df: pd.DataFrame) -> pd.DataFrame:
     """
     Busca en la columna articulo si la fila esta vacia o no y agarra el valor
-    de la esa fila en la columna PRECIO PACK para pasarlo a la fila de arriba
+    de esa fila en la columna PRECIO PACK para pasarlo a la fila de arriba
     donde deberia estar
     luego llama la funcion `more_processing` para limpiar la fila vacia
     """
@@ -109,7 +109,7 @@ def checkear_y_asignar(df: pd.DataFrame) -> pd.DataFrame:
 
 def more_processing(df_t1: pd.DataFrame) -> pd.DataFrame:
     """
-    Limpia la fila que con articulo vacia ya que su valor fue extraido y ordenado
+    Limpia la fila con ARTICULO vacio ya que su valor fue extraido y ordenado
     en la funcion `checkear_y_asignar`
     """
     df_t2 = df_t1.copy()
