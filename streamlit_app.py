@@ -1,7 +1,7 @@
 import streamlit as st
 import pdfplumber
 import pandas as pd
-import numpy as np
+from numpy import nan
 from io import BytesIO
 from datetime import datetime, timezone, timedelta
 
@@ -76,10 +76,10 @@ def process_data(all_data: list) -> pd.DataFrame:
     df.columns = [name.replace("\n", " ") for name in df.columns]
     df2 = df.copy()
     df2["PRECIO PACK"] = df2["PRECIO PACK"].astype(str).str.replace("$", "").str.replace("\n", "").str.replace(".", "").str.replace(",", ".")
-    df2.loc[df2["PRECIO PACK"] == "", "PRECIO PACK"] = np.nan
+    df2.loc[df2["PRECIO PACK"] == "", "PRECIO PACK"] = nan
     df2["PRECIO PACK"] = pd.to_numeric(df2["PRECIO PACK"], errors='coerce')
     df2["PRECIO UNITARIO"] = df2["PRECIO UNITARIO"].astype(str).str.replace("$ ", "").str.replace(".", "").str.replace(",", ".")
-    df2.loc[df2["PRECIO UNITARIO"] == "", "PRECIO UNITARIO"] = np.nan
+    df2.loc[df2["PRECIO UNITARIO"] == "", "PRECIO UNITARIO"] = nan
     df2["PRECIO UNITARIO"] = pd.to_numeric(df2["PRECIO UNITARIO"], errors='coerce')
     df2 = df2[~df2.iloc[:, 0].str.contains('ARTÍCULO', na=False)].reset_index(drop=True)
 
