@@ -23,11 +23,9 @@ def main():
 
             all_data = extract_data(uploaded_file)
             df_t1 = process_data(all_data)
-            df_t2 = checkear_y_asignar(df_t1)
-            df_final = more_processing(df_t2)    # sin nueva columna
-            df_final_v02 = add_categories(df_final) # con nueva columna
+            df_final= add_categories(df_t1) # con nueva columna
         
-            output_file = save_file(df_final_v02)
+            output_file = save_file(df_final)
 
             # set timezone to ARG
             AR_hour = -3
@@ -42,7 +40,7 @@ def main():
             file_name = f"{pdf_name}-{AR_now_final}.xlsx"
         
             st.write("PDF procesado con exito!")
-            st.write(df_final_v02)
+            st.write(df_final)
             st.download_button(
                 label="Descargar Excel",
                 data=output_file,
@@ -75,29 +73,41 @@ def process_data(all_data: list) -> pd.DataFrame:
     df2.loc[df2["PRECIO UNITARIO"] == "", "PRECIO UNITARIO"] = np.nan
     df2["PRECIO UNITARIO"] = pd.to_numeric(df2["PRECIO UNITARIO"], errors='coerce')
     df2 = df2[~df2.iloc[:, 0].str.contains('ARTÍCULO', na=False)].reset_index(drop=True)
-    return df2
+
+    df2_1 = df2.copy()
+    df2_1 = checkear_y_asignar(df2_1)
+
+    return df2_1
 
 def checkear_y_asignar(df: pd.DataFrame) -> pd.DataFrame:
-    for i in range(1, len(df)):
-        if (pd.isna(df.iloc[i, 0]) or df.iloc[i, 0] == '') and i < len(df) - 1:
-            if pd.isna(df.iloc[i-1, 1]) or df.iloc[i-1, 1] == '':
-                df.iloc[i-1, 1] = df.iloc[i, 1]
-    return df
+   # for i in range(1, len(df)):
+   #     if (pd.isna(df.iloc[i, 0]) or df.iloc[i, 0] == '') and i < len(df) - 1:
+   #         if pd.isna(df.iloc[i-1, 1]) or df.iloc[i-1, 1] == '':
+   #             df.iloc[i-1, 1] = df.iloc[i, 1]
 
-def more_processing(df_t2: pd.DataFrame) -> pd.DataFrame:
-    df_t3 = df_t2.copy()
-    df_t3 = df_t3.drop(df_t3[df_t3["ARTÍCULO"] == ""].index)
-    df_final = df_t3.reset_index(drop=True)
+    for index in df.index.to_list():
+        if (pd.isna(df.at[index, 'ARTÍCULO']) or df.at[index, 'ARTÍCULO'] == ''):
+            if pd.isna(df.at[index-1, 'PRECIO PACK']) or df.at[index-1, 'PRECIO PACK'] == '':
+                df.at[index-1, 'PRECIO PACK'] = df.at[index, 'PRECIO PACK']
+
+    # drop empty since they values were transfered
+
+    df_f = more_processing(df)
+
+    return df_f
+
+def more_processing(df_t1: pd.DataFrame) -> pd.DataFrame:
+    df_t2 = df_t1.copy()
+    df_t2 = df_t2.drop(df_t2[df_t2["ARTÍCULO"] == ""].index)
+    df_final = df_t2.reset_index(drop=True)
     return df_final
 
 def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
     dff = df_final.copy()
     # Inicializar la columna 
     dff['Categoria'] = None
-
     # guardar la categoria que encontramos sola
     current_category = None
-
     # Iterar las filas y asignar la categoria que encontremos sola, de lo contrario agregarla a la nueva columna
     for index, row in dff.iterrows():
         if (pd.isnull(row['PRECIO PACK']) or row['PRECIO PACK'] == "") and (pd.isnull(row['CANT. X PACK']) or row['CANT. X PACK'] == ""):
@@ -107,13 +117,10 @@ def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
                                                            ## since df.iloc is more suitable for grouping rows
     # Dropear las columnas de las categorias ya encontradas
     dff = dff.dropna(subset=['PRECIO PACK', 'CANT. X PACK'])
-
     # Reordenamos
     dff = dff[['Categoria', 'ARTÍCULO', 'PRECIO PACK', 'CANT. X PACK', 'PRECIO UNITARIO']]
-
     # Reseteamos index
     dff2 = dff.reset_index(drop=True)
-
     # Make sure of types
     dff2['PRECIO PACK'] = pd.to_numeric(dff2['PRECIO PACK'])
     dff2['PRECIO UNITARIO'] = pd.to_numeric(dff2['PRECIO UNITARIO'])
