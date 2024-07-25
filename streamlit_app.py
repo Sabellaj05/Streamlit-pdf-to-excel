@@ -3,8 +3,7 @@ import pdfplumber
 import pandas as pd
 import numpy as np
 from io import BytesIO
-from datetime import datetime
-from pathlib import Path
+from datetime import datetime, timezone, timedelta
 
 def main():
     st.title("PDF a Excel")
@@ -28,8 +27,18 @@ def main():
             df_final = more_processing(df_t2)
         
             output_file = save_file(df_final)
-            now = datetime.now().strftime("%d-%m-%Y_%Hh%Mm%Ss")
-            file_name = f"{pdf_name}-{now}.xlsx"
+
+            # set timezone to ARG
+            AR_hour = -5
+            AR_offset = timedelta(hours=AR_hour)
+            AR_timezone = timezone(AR_offset)
+            now = datetime.now()
+            AR_now = now.astimezone(AR_timezone)
+
+            AR_now_final = AR_now.strftime("%d-%m-%Y_%Hh%Mm%Ss")
+
+            # format file
+            file_name = f"{pdf_name}-{AR_now_final}.xlsx"
         
             st.write("PDF procesado con exito!")
             st.write(df_final)
@@ -40,7 +49,7 @@ def main():
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
 
-def extract_data(pdf_path: Path) -> list:
+def extract_data(pdf_path) -> list:
     all_data = []
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
