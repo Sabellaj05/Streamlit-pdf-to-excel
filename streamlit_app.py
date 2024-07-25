@@ -29,7 +29,7 @@ def main():
             output_file = save_file(df_final)
 
             # set timezone to ARG
-            AR_hour = -5
+            AR_hour = -3
             AR_offset = timedelta(hours=AR_hour)
             AR_timezone = timezone(AR_offset)
             now = datetime.now()
