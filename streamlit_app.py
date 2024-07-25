@@ -52,6 +52,7 @@ def extract_data(pdf_path) -> list:
     """
     Extracts raw data from pdf, outputs a list
     """
+
     all_data = []
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
@@ -68,8 +69,8 @@ def process_data(all_data: list) -> pd.DataFrame:
     Agarra los datos crudos, pone las columnas correctas, parsea bien los nombres 
     y datos para luego ser correctamente casteados a float, luego llama a la fun
     `checkear_y_asignar` para mover los datos desfazados y limpiar las filas
-
     """
+
     df = pd.DataFrame(all_data, columns=["temp1", "temp2", "temp3", "temp4"])
     df.columns = df.iloc[0]
     df = df.drop(0).reset_index(drop=True)
@@ -112,6 +113,7 @@ def more_processing(df_t1: pd.DataFrame) -> pd.DataFrame:
     Limpia la fila con ARTICULO vacio ya que su valor fue extraido y ordenado
     en la funcion `checkear_y_asignar`
     """
+
     df_t2 = df_t1.copy()
     df_t2 = df_t2.drop(df_t2[df_t2["ARTÍCULO"] == ""].index)
     df_final = df_t2.reset_index(drop=True)
@@ -125,6 +127,7 @@ def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
     Una vez encontradas todas las categorias borra las filas que las contenian
     en ultima instancia pone bien los data types a las columnas
     """
+
     dff = df_final.copy()
     # Inicializar la columna 
     dff['Categoria'] = None
