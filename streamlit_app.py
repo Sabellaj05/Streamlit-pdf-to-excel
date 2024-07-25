@@ -123,20 +123,20 @@ def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
 
     return dff2
 
-def save_file(df_final: pd.DataFrame) -> BytesIO:
+def save_file(df_final_v02: pd.DataFrame) -> BytesIO:
     """
     Writes the data in memory
     """
     output = BytesIO()
     # writes to the bytes object
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-        df_final.to_excel(writer, index=False, sheet_name='Sheet1')
+        df_final_v02.to_excel(writer, index=False, sheet_name='Sheet1')
         
         workbook = writer.book
         worksheet = writer.sheets['Sheet1']
         
-        for i, col in enumerate(df_final.columns):
-            max_len = max(df_final[col].astype(str).map(len).max(), len(col)) + 2
+        for i, col in enumerate(df_final_v02.columns):
+            max_len = max(df_final_v02[col].astype(str).map(len).max(), len(col)) + 2
             worksheet.set_column(i, i, max_len)
         
         header_format = workbook.add_format({
@@ -147,7 +147,7 @@ def save_file(df_final: pd.DataFrame) -> BytesIO:
             'border': 1
         })
         
-        for i, col in enumerate(df_final.columns):
+        for i, col in enumerate(df_final_v02.columns):
             worksheet.write(0, i, col, header_format)
     # reset the pointer
     output.seek(0)
