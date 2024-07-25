@@ -93,7 +93,7 @@ def more_processing(df_t2: pd.DataFrame) -> pd.DataFrame:
 def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
     dff = df_final.copy()
     # Inicializar la columna 
-    dff['Category'] = None
+    dff['Categoria'] = None
 
     # guardar la categoria que encontramos sola
     current_category = None
@@ -103,13 +103,13 @@ def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
         if (pd.isnull(row['PRECIO PACK']) or row['PRECIO PACK'] == "") and (pd.isnull(row['CANT. X PACK']) or row['CANT. X PACK'] == ""):
             current_category = row['ARTÍCULO']
         else:
-            dff.at[index, 'Category'] = current_category   ## using df.at since only requires 1 specific row to assing
+            dff.at[index, 'Categoria'] = current_category   ## using df.at since only requires 1 specific row to assing
                                                            ## since df.iloc is more suitable for grouping rows
     # Dropear las columnas de las categorias ya encontradas
     dff = dff.dropna(subset=['PRECIO PACK', 'CANT. X PACK'])
 
     # Reordenamos
-    dff = dff[['Category', 'ARTÍCULO', 'PRECIO PACK', 'CANT. X PACK', 'PRECIO UNITARIO']]
+    dff = dff[['Categoria', 'ARTÍCULO', 'PRECIO PACK', 'CANT. X PACK', 'PRECIO UNITARIO']]
 
     # Reseteamos index
     dff2 = dff.reset_index(drop=True)
