@@ -24,9 +24,10 @@ def main():
             all_data = extract_data(uploaded_file)
             df_t1 = process_data(all_data)
             df_t2 = checkear_y_asignar(df_t1)
-            df_final = more_processing(df_t2)
+            df_final = more_processing(df_t2)    # sin nueva columna
+            df_final_v02 = add_categories(df_final) # con nueva columna
         
-            output_file = save_file(df_final)
+            output_file = save_file(df_final_v02)
 
             # set timezone to ARG
             AR_hour = -3
@@ -88,6 +89,33 @@ def more_processing(df_t2: pd.DataFrame) -> pd.DataFrame:
     df_t3 = df_t3.drop(df_t3[df_t3["ARTÍCULO"] == ""].index)
     df_final = df_t3.reset_index(drop=True)
     return df_final
+
+def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
+    dff = df_final.copy()
+    # Inicializar la columna 
+    dff['Category'] = None
+
+    # guardar la categoria que encontramos sola
+    current_category = None
+
+    # Iterar las filas y asignar la categoria que encontremos sola, de lo contrario agregarla a la nueva columna
+    for index, row in dff.iterrows():
+        if (pd.isnull(row['PRECIO PACK']) or row['PRECIO PACK'] == "") and (pd.isnull(row['CANT. X PACK']) or row['CANT. X PACK'] == ""):
+            current_category = row['ARTÍCULO']
+        else:
+            dff.at[index, 'Category'] = current_category   ## using df.at since only requires 1 specific row to assing
+                                                           ## since df.iloc is more suitable for grouping rows
+    # Dropear las columnas de las categorias ya encontradas
+    dff = dff.dropna(subset=['PRECIO PACK', 'CANT. X PACK'])
+
+    # Reordenamos
+    dff = dff[['Category', 'ARTÍCULO', 'PRECIO PACK', 'CANT. X PACK']]
+
+    # Reseteamos index
+    dff2 = dff.reset_index(drop=True)
+    dff2.head()
+
+    return dff2
 
 def save_file(df_final: pd.DataFrame) -> BytesIO:
     """
