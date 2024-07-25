@@ -42,7 +42,7 @@ def main():
             file_name = f"{pdf_name}-{AR_now_final}.xlsx"
         
             st.write("PDF procesado con exito!")
-            st.write(df_final)
+            st.write(df_final_v02)
             st.download_button(
                 label="Descargar Excel",
                 data=output_file,
@@ -109,7 +109,7 @@ def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
     dff = dff.dropna(subset=['PRECIO PACK', 'CANT. X PACK'])
 
     # Reordenamos
-    dff = dff[['Category', 'ARTÍCULO', 'PRECIO PACK', 'CANT. X PACK']]
+    dff = dff[['Category', 'ARTÍCULO', 'PRECIO PACK', 'CANT. X PACK', 'PRECIO UNITARIO']]
 
     # Reseteamos index
     dff2 = dff.reset_index(drop=True)
