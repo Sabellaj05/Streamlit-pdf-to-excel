@@ -149,7 +149,8 @@ def add_categories(df_final: pd.DataFrame) -> pd.DataFrame:
     # Make sure of types
     dff2['PRECIO PACK'] = pd.to_numeric(dff2['PRECIO PACK'])
     dff2['PRECIO UNITARIO'] = pd.to_numeric(dff2['PRECIO UNITARIO'])
-    dff2['CANT. X PACK'] = dff2['CANT. X PACK'].astype(int)
+    #dff2['CANT. X PACK'] = dff2['CANT. X PACK'].astype(int)
+    dff2['CANT. X PACK'] = pd.to_numeric(dff2['CANT. X PACK'])
 
     dff2.head()
 
