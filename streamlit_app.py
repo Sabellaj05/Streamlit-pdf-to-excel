@@ -5,58 +5,12 @@ from numpy import nan
 from io import BytesIO
 from datetime import datetime, timezone, timedelta
 
-<<<<<<< HEAD
-def main():
-    st.title("PDF a Excel")
-
-    if 'uploaded_file' not in st.session_state:
-        st.session_state.uploaded_file = None
-    
-    uploaded_file = st.file_uploader("Elegi un PDF", type="pdf")
-    
-    if uploaded_file is not None:
-        st.session_state.uploaded_file = uploaded_file
-        st.write("PDF cargado con exito!")
-
-    if st.session_state.uploaded_file is not None:
-        if st.button("Que empiece la fiesta"):
-            pdf_name = uploaded_file.name.strip(".pdf")
-
-            all_data = extract_data(uploaded_file)
-            df_t1 = process_data(all_data)
-            df_final= add_categories(df_t1) # con nueva columna
-        
-            output_file = save_file(df_final)
-
-            # set timezone to ARG
-            AR_hour = -3
-            AR_offset = timedelta(hours=AR_hour)
-            AR_timezone = timezone(AR_offset)
-            now = datetime.now()
-            AR_now = now.astimezone(AR_timezone)
-
-            AR_now_final = AR_now.strftime("%d-%m-%Y_%Hh%Mm%Ss")
-
-            # format file
-            file_name = f"{pdf_name}-{AR_now_final}.xlsx"
-        
-            st.write("PDF procesado con exito!")
-            st.write(df_final)
-            st.download_button(
-                label="Descargar Excel",
-                data=output_file,
-                file_name=file_name,
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-
 def extract_data(pdf_path) -> list:
     """
     Extracts raw data from pdf, outputs a list
     """
 
-=======
 def extract_data(pdf_path: Path) -> list:
->>>>>>> 3234d6e (Moved main function to proper place)
     all_data = []
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
@@ -215,6 +169,49 @@ def main() -> None:
             output_file = save_file(df_final)
             now = datetime.now().strftime("%d-%m-%Y_%Hh%Mm%Ss")
             file_name = f"{pdf_name}-{now}.xlsx"
+        
+            st.write("PDF procesado con exito!")
+            st.write(df_final)
+            st.download_button(
+                label="Descargar Excel",
+                data=output_file,
+                file_name=file_name,
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+
+def main() -> None:
+    st.title("PDF a Excel")
+
+    if 'uploaded_file' not in st.session_state:
+        st.session_state.uploaded_file = None
+    
+    uploaded_file = st.file_uploader("Elegi un PDF", type="pdf")
+    
+    if uploaded_file is not None:
+        st.session_state.uploaded_file = uploaded_file
+        st.write("PDF cargado con exito!")
+
+    if st.session_state.uploaded_file is not None:
+        if st.button("Que empiece la fiesta"):
+            pdf_name = uploaded_file.name.strip(".pdf")
+
+            all_data = extract_data(uploaded_file)
+            df_t1 = process_data(all_data)
+            df_final= add_categories(df_t1) # con nueva columna
+        
+            output_file = save_file(df_final)
+
+            # set timezone to ARG
+            AR_hour = -3
+            AR_offset = timedelta(hours=AR_hour)
+            AR_timezone = timezone(AR_offset)
+            now = datetime.now()
+            AR_now = now.astimezone(AR_timezone)
+
+            AR_now_final = AR_now.strftime("%d-%m-%Y_%Hh%Mm%Ss")
+
+            # format file
+            file_name = f"{pdf_name}-{AR_now_final}.xlsx"
         
             st.write("PDF procesado con exito!")
             st.write(df_final)
