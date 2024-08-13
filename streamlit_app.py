@@ -5,12 +5,10 @@ from numpy import nan
 from io import BytesIO
 from datetime import datetime, timezone, timedelta
 
-def extract_data(pdf_path) -> list:
+def extract_data(pdf_path: Path) -> list:
     """
     Extracts raw data from pdf, outputs a list
     """
-
-def extract_data(pdf_path: Path) -> list:
     all_data = []
     with pdfplumber.open(pdf_path) as pdf:
         for page in pdf.pages:
@@ -144,40 +142,6 @@ def save_file(df_final: pd.DataFrame) -> BytesIO:
     # reset the pointer
     output.seek(0)
     return output
-
-def main() -> None:
-    st.title("PDF a Excel")
-
-    if 'uploaded_file' not in st.session_state:
-        st.session_state.uploaded_file = None
-    
-    uploaded_file = st.file_uploader("Elegi un PDF", type="pdf")
-    
-    if uploaded_file is not None:
-        st.session_state.uploaded_file = uploaded_file
-        st.write("PDF cargado con exito!")
-
-    if st.session_state.uploaded_file is not None:
-        if st.button("Que empiece la fiesta"):
-            pdf_name = uploaded_file.name.strip(".pdf")
-
-            all_data = extract_data(uploaded_file)
-            df_t1 = process_data(all_data)
-            df_t2 = checkear_y_asignar(df_t1)
-            df_final = more_processing(df_t2)
-        
-            output_file = save_file(df_final)
-            now = datetime.now().strftime("%d-%m-%Y_%Hh%Mm%Ss")
-            file_name = f"{pdf_name}-{now}.xlsx"
-        
-            st.write("PDF procesado con exito!")
-            st.write(df_final)
-            st.download_button(
-                label="Descargar Excel",
-                data=output_file,
-                file_name=file_name,
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
 
 def main() -> None:
     st.title("PDF a Excel")
