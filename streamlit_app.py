@@ -5,7 +5,7 @@ from numpy import nan
 from io import BytesIO
 from datetime import datetime, timezone, timedelta
 
-def extract_data(pdf_path: Path) -> list:
+def extract_data(pdf_path) -> list:
     """
     Extracts raw data from pdf, outputs a list
     """
