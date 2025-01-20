@@ -35,13 +35,15 @@ def process_data(all_data: list) -> pd.DataFrame:
     df2["PRECIO PACK"] = df2["PRECIO PACK"].astype(str).str.replace("$", "").str.replace("\n", "").str.replace(".", "").str.replace(",", ".")
     df2.loc[df2["PRECIO PACK"] == "", "PRECIO PACK"] = nan
     df2["PRECIO PACK"] = pd.to_numeric(df2["PRECIO PACK"], errors='coerce')
-    df2["PRECIO UNITARIO"] = df2["PRECIO UNITARIO"].astype(str).str.replace("$ ", "").str.replace(".", "").str.replace(",", ".")
+    df2["PRECIO UNITARIO"] = df2["PRECIO UNITARIO"].astype(str).str.replace("$", "").str.replace("\n", "").str.replace(".", "").str.replace(",", ".")
     df2.loc[df2["PRECIO UNITARIO"] == "", "PRECIO UNITARIO"] = nan
     df2["PRECIO UNITARIO"] = pd.to_numeric(df2["PRECIO UNITARIO"], errors='coerce')
     df2 = df2[~df2.iloc[:, 0].str.contains('ARTÍCULO', na=False)].reset_index(drop=True)
 
     df2_1 = df2.copy()
     df2_1 = checkear_y_asignar(df2_1)
+
+    print(df2["PRECIO UNITARIO"].head())
 
     return df2_1
 
